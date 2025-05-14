@@ -1,4 +1,4 @@
-# USD Scene Builder
+# USD Scene Generator
 
 This project provides a modular Python-based toolkit for creating, customizing, and exporting OpenUSD (`.usda`) scenes using [Pixar's openUSD](https://graphics.pixar.com/usd/docs/index.html). It is designed for procedural scene generation with support for geometry, camera placement, environment lighting, and materials.
 
