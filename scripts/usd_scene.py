@@ -195,10 +195,10 @@ class MaterialLibrary:
 
         # Set material properties for car paint
         shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(color)
-        shader.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(0.8)
+        shader.CreateInput("metallic", Sdf.ValueTypeNames.Float).Set(1.0)
         shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.2)
-        shader.CreateInput("clearcoat", Sdf.ValueTypeNames.Float).Set(1.0)
-        shader.CreateInput("clearcoatRoughness", Sdf.ValueTypeNames.Float).Set(0.05)
+        shader.CreateInput("clearcoat", Sdf.ValueTypeNames.Float).Set(0.5)
+        shader.CreateInput("clearcoatRoughness", Sdf.ValueTypeNames.Float).Set(0.1)
 
         # Connect shader to material output
         material.CreateSurfaceOutput().ConnectToSource(

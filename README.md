@@ -58,8 +58,18 @@ This will generate a test USD scene at
 You can view it with 
 
 ```bash
- usdview .\outputs\scenes\test_scene.usda 
+ usdview .\outputs\scenes\test_scene.usda
 ```
+
+Use help flag to see advanced option like change to a different renderer, select a view camera and etc.
+
+### 5. Render the scene
+
+```bash
+ usdrecord .\outputs\scenes\test_scene.usda .\outputs\renders\beauty.exr
+```
+
+Use help flag to see advanced option like change to a different renderer, select camera and etc.
 
 ## 📝 Notes
 
