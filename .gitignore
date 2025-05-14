@@ -20,6 +20,11 @@ venv/
 conda-meta/
 *.conda
 
+# Iamge textures and rendered outputs
+*.exr
+*.png
+*.jpg
+
 # ------------------------
 # OpenUSD-specific ignores
 # ------------------------
@@ -53,8 +58,3 @@ ehthumbs.db     # Windows
 outputs/*
 !outputs/.gitkeep   # keep folder but ignore contents
 
-
-# Iamge textures and rendered outputs
-*.exr
-*.png
-*.jpg
