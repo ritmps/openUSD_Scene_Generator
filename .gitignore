@@ -31,10 +31,6 @@ conda-meta/
 *.usd_tmp
 *.usdpreview
 
-# Rendered outputs
-*.exr
-*.png
-*.jpg
 
 # ------------------------
 # OS/platform noise
@@ -56,3 +52,9 @@ ehthumbs.db     # Windows
 # ------------------------
 outputs/*
 !outputs/.gitkeep   # keep folder but ignore contents
+
+
+# Iamge textures and rendered outputs
+*.exr
+*.png
+*.jpg
