@@ -1,0 +1,58 @@
+# ------------------------
+# Python-specific ignores
+# ------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environment folders
+env/
+venv/
+.venv/
+
+# VS Code local workspace settings
+.vscode/settings.json
+.vscode/*.code-workspace
+
+# Conda environment lock file
+conda-meta/
+*.conda
+
+# ------------------------
+# OpenUSD-specific ignores
+# ------------------------
+*.usdc
+*.usd
+*.usdz
+*.usda.bak
+*.usd.lock
+*.usd_tmp
+*.usdpreview
+
+# Rendered outputs
+*.exr
+*.png
+*.jpg
+
+# ------------------------
+# OS/platform noise
+# ------------------------
+.DS_Store       # macOS
+Thumbs.db       # Windows
+ehthumbs.db     # Windows
+
+# ------------------------
+# Git metadata safety
+# ------------------------
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# ------------------------
+# Project output
+# ------------------------
+outputs/*
+!outputs/.gitkeep   # keep folder but ignore contents
