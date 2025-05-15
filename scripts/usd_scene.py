@@ -102,52 +102,12 @@ class SceneBuilder:
         """
         material = UsdShade.Material.Get(self.stage, material_path)
         UsdShade.MaterialBindingAPI.Apply(prim.GetPrim()).Bind(material)
-
-    def add_camera(self, path, position=(0, 5, 15), target=None, focal_length=35):
+    
+    def print_stage(self):
         """
-        Add a camera to the scene with optional look-at target
-
-        Args:
-            path (str): USD path for the new camera.
-            position (tuple): (x,y,z) camera position
-            target (tuple, optional): (x,y,z) target point to look at
-            focal_length (float): Camera lens focal length in mm
-
-        Returns:
-            UsdGeom.Camera: Created camera prim
+        Print the USD file in ASCII format.
         """
-        camera = UsdGeom.Camera.Define(self.stage, path)
-
-        camera.CreateProjectionAttr().Set(UsdGeom.Tokens.perspective)
-        camera.CreateFocalLengthAttr().Set(focal_length)
-        camera.CreateClippingRangeAttr().Set((0.1, 100000))
-        if target:
-            self._make_camera_look_at(camera, position, target)
-        return camera
-
-    def _make_camera_look_at(self, camera, camera_pos, target_pos):
-        """
-        Orient camera to look at a target point using Euler angles
-
-        Args:
-            camera (UsdGeom.Camera): Camera prim to orient
-            camera_pos (tuple): Current camera position (x,y,z)
-            target_pos (tuple): Target position to look at (x,y,z)
-        """
-        camera_pos = Gf.Vec3d(*camera_pos)
-        target_pos = Gf.Vec3d(*target_pos)
-
-        # Calculate direction vector and normalize
-        direction = (target_pos - camera_pos).GetNormalized()
-
-        # Convert direction to yaw (around Y) and pitch (around X) angles
-        yaw = math.degrees(math.atan2(-direction[0], -direction[2]))
-        pitch = math.degrees(math.asin(direction[1]))
-
-        # Apply transforms to camera
-        camera.AddTranslateOp().Set(camera_pos)
-        camera.AddRotateYOp().Set(yaw)
-        camera.AddRotateXOp().Set(pitch)
+        print(self.stage.ExportToString())
 
     def save(self, path=None):
         """
@@ -307,3 +267,64 @@ class Environment:
         dome_light.CreateTextureFileAttr(hdri_path)
         dome_light.CreateIntensityAttr(intensity)
         return dome_light
+
+class Camera:
+    """Class for managing camera creation and editing in USD scenes."""
+
+    def __init__(self, stage):
+        """
+        Initialize the Camera system with a USD stage.
+
+        Args:
+            stage (Usd.Stage): USD stage to add cameras to.
+        """
+        self.stage = stage
+    
+    def add_camera(self, path, position = (0, 5, 15), target=None, focal_length=35):
+        """
+        Add a camera to the scene with optional look-at target.
+
+        Args:
+            path (str): USD path for the new camera.
+            position (tuple): (x, y, z) camera position.
+            target (tuple, optional): (x, y, z) target point to look at.
+            focal_length (float): Camera lens focal length in mm.
+
+        Returns:
+            UsdGeom.Camera: Created camera prim.
+        """
+        camera = UsdGeom.Camera.Define(self.stage, path)
+        camera.CreateProjectionAttr().Set(UsdGeom.Tokens.perspective)
+        camera.CreateFocalLengthAttr().Set(focal_length)
+        camera.CreateClippingRangeAttr().Set((0.1, 100000))
+
+        if target:
+            self._make_camera_look_at(camera, position, target)
+        else:
+            camera.AddTranslateOp().Set(Gf.Vec3d(*position))
+
+        return camera
+
+    def  _make_camera_look_at(self, camera, camera_pos, target_pos):
+        """
+        Orient camera to look at a target point using Euler angles.
+
+        Args:
+            camera (UsdGeom.Camera): Camera prim to orient.
+            camera_pos (tuple): Current camera position (x, y, z).
+            target_pos (tuple): Target position to look at (x, y, z).
+        """
+        camera_pos = Gf.Vec3d(*camera_pos)
+        target_pos = Gf.Vec3d(*target_pos)
+
+        # Calculate direction vector and normalize
+        direction = (target_pos - camera_pos).GetNormalized()
+
+        # Convert direction to yaw (around Y) and pitch (around X) angles
+        yaw = math.degrees(math.atan2(-direction[0], -direction[2]))
+        pitch = math.degrees(math.asin(direction[1]))
+
+        # Apply transforms to camera
+        camera.AddTranslateOp().Set(camera_pos)
+        camera.AddRotateYOp().Set(yaw)
+        camera.AddRotateXOp().Set(pitch)

@@ -73,4 +73,6 @@ Use help flag to see advanced option like change to a different renderer, select
 
 ## 📝 Notes
 
-Built with OpenUSD Python bindings (Python 3.8+, openUSD 25.05+)
+Built with OpenUSD Python bindings (Python 3.8+, openUSD 25.05+) in Windows 11.
+
+## Known Issues
