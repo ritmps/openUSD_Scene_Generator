@@ -1,4 +1,4 @@
-from usd_scene import SceneBuilder, MaterialLibrary, Environment, Camera
+from usd_scene import SceneBuilder, MaterialLibrary, Environment, Camera, RenderSettingsManager
 import os
 
 # Create a scene
@@ -19,12 +19,34 @@ material = materials.create_glass("Glass", roughness = 0.02)
 sphere = builder.add_sphere("/World/Sphere", radius=1.0, material=material)
 
 # Add a static camera looking at the object
+camera_path = "/World/Camera"
 camera_position = (-10, -5, -10)
-camera.add_camera("/World/Camera", camera_position, target=(0, 0, 0))
+camera.add_camera(camera_path, camera_position, target=(0, 0, 0))
 
 # Set HDRI lighting
 hdri_path = os.path.abspath("./assets/textures/studio_env.exr")
 environment.set_hdri_lighting(hdri_path)
+
+# ---------- Add Render Settings ----------
+
+# Create render settings
+render_mgr = RenderSettingsManager(builder.stage)
+
+# Create RenderVars
+color_var = render_mgr.create_render_var("color", "Ci")
+depth_var = render_mgr.create_render_var("depth", "z", data_type="float", source_type="builtin")
+
+
+# Create RenderProducts
+color_product = render_mgr.create_render_product("ColorProduct", camera_path, "./outputs/renders/color.exr", [color_var])
+depth_product = render_mgr.create_render_product("DepthProduct", camera_path, "./outputs/renders/depth.exr", [depth_var])
+
+# Create RenderSettings prim referencing both products
+render_mgr.create_basic_render_settings("PrimarySettings", camera_path, resolution=(512, 512), products=[
+    color_product,
+    depth_product
+])
+# -----------------------------------------
 
 # Save
 builder.save()

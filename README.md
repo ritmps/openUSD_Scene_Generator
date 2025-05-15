@@ -61,7 +61,7 @@ You can view it with
  usdview .\outputs\scenes\test_scene.usda
 ```
 
-Use help flag to see advanced option like change to a different renderer, select a view camera and etc.
+Use help flag to see advanced options like change to a different renderer, select a view camera and etc.
 
 ### 5. Render the scene
 
@@ -69,10 +69,12 @@ Use help flag to see advanced option like change to a different renderer, select
  usdrecord .\outputs\scenes\test_scene.usda .\outputs\renders\beauty.exr
 ```
 
-Use help flag to see advanced option like change to a different renderer, select camera and etc.
+Use help flag to see advanced options like change to a different renderer, select camera and etc.
 
 ## 📝 Notes
 
 Built with OpenUSD Python bindings (Python 3.8+, openUSD 25.05+) in Windows 11.
 
 ## Known Issues
+
+UsdShade based RenderSettingsManager class is implemented but is not fully tested. Note that some renderers like Storm might not understand RenderSettings prim. 

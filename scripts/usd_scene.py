@@ -1,5 +1,6 @@
-from pxr import Usd, UsdGeom, UsdShade, Sdf, Gf, UsdLux
+from pxr import Usd, UsdGeom, UsdShade, Sdf, Gf, UsdLux, UsdRender
 import math
+import pathlib
 
 
 class SceneBuilder:
@@ -328,3 +329,111 @@ class Camera:
         camera.AddTranslateOp().Set(camera_pos)
         camera.AddRotateYOp().Set(yaw)
         camera.AddRotateXOp().Set(pitch)
+
+class RenderSettingsManager:
+    """Class to manage RenderSettings, RenderProducts, and RenderVars."""
+
+    def __init__(self, stage, render_scope="/Render"):
+        """
+        Initialize the render settings manager.
+
+        Args:
+            stage (Usd.Stage): The USD stage to operate on.
+            render_scope (str): Path under which to organize render-related prims.
+        """
+        self.stage = stage
+        self.render_scope = render_scope
+
+        # Create a Scope to group all rendering-related prims under /Render
+        UsdGeom.Scope.Define(stage, render_scope)
+
+    def create_basic_render_settings(self, settings_name, camera_path, resolution=(512, 512), products=[]):
+        """
+        Create a RenderSettings prim and link it to products and a camera.
+
+        Args:
+            settings_name (str): Name of the RenderSettings prim.
+            camera_path (str): Path to the Camera prim to use.
+            resolution (tuple): Output resolution (width, height).
+            products (list): List of paths to RenderProduct prims.
+
+        Returns:
+            str: Path to the created RenderSettings prim.
+        """
+        settings_path = f"{self.render_scope}/{settings_name}"
+
+        # Define the RenderSettings prim at the desired path
+        settings = UsdRender.Settings.Define(self.stage, settings_path)
+
+        self.stage.SetMetadata("renderSettingsPrimPath", settings_path)
+
+        # Set the image resolution
+        settings.CreateResolutionAttr().Set(Gf.Vec2i(*resolution))
+
+        # Link the camera
+        settings.CreateCameraRel().SetTargets([Sdf.Path(camera_path)])
+
+        # Optionally link to output products (images, depth maps, etc.)
+        if products:
+            settings.CreateProductsRel().SetTargets([Sdf.Path(p) for p in products])
+
+        return settings_path
+
+    def create_render_product(self, name, camera_path, output_path, ordered_vars=None):
+        """
+        Create a RenderProduct (e.g. a color image or depth map).
+
+        Args:
+            name (str): Name of the RenderProduct prim.
+            camera_path (str): Path to the camera this product uses.
+            output_path (str): File path for the rendered output (e.g., "./renders/depth.exr").
+            ordered_vars (list): Paths to RenderVar prims that define the output channels.
+
+        Returns:
+            str: Path to the created RenderProduct prim.
+        """
+        product_path = f"{self.render_scope}/{name}"
+        # Define the RenderProduct prim
+        product = UsdRender.Product.Define(self.stage, product_path)
+
+        # Set the output filename (convert to POSIX style for USD compatibility)
+        # product.CreateProductNameAttr().Set(str(pathlib.Path(output_path).as_posix()))
+        product.CreateProductNameAttr().Set(str(pathlib.Path(output_path).resolve().as_posix()))
+
+        # Attach the product to a camera
+        product.CreateCameraRel().SetTargets([Sdf.Path(camera_path)])
+
+        # Link to the ordered list of render variables (AOVs, LPEs, etc.)
+        if ordered_vars:
+            product.CreateOrderedVarsRel().SetTargets([Sdf.Path(v) for v in ordered_vars])
+        return product_path
+
+    def create_render_var(self, var_name, source_name, data_type="float", source_type=None):
+        """
+        Create a RenderVar to define a data output channel (like color, depth, normals).
+
+        Args:
+            var_name (str): Name of the RenderVar prim.
+            source_name (str): Source token or LPE string (e.g., "Ci", "depth", or "C<RD>[<L.>O]").
+            data_type (str): Data type for the output ("float", "int", etc.).
+            source_type (str, optional): How to interpret source_name (e.g., "lpe").
+
+        Returns:
+            str: Path to the created RenderVar prim.
+        """
+        var_path = f"{self.render_scope}/Vars/{var_name}"
+
+        # Define the RenderVar prim at the path
+        var = UsdRender.Var.Define(self.stage, var_path)
+
+        # Tell the renderer what value to output (e.g., "Ci" for color, "depth" for z-buffer)
+        var.CreateSourceNameAttr().Set(source_name)
+
+        # Specify the data type (e.g., float, int)
+        var.CreateDataTypeAttr().Set(data_type)
+
+        # Optionally specify the type of source ("lpe" for light path expression, etc.)
+        if source_type:
+            var.CreateSourceTypeAttr().Set(source_type)
+
+        return var_path
