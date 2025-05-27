@@ -9,18 +9,18 @@ camera = Camera(builder.stage)
 
 # Create materials and objects
 
-# # car paint
-# material = materials.create_car_paint("BluePaint", (0.1, 0.2, 0.8))
-
-# glass
-material = materials.create_glass("Glass", roughness = 0.02)
+# --- Create multiple materials ---
+blue_paint = materials.create_car_paint("BluePaint", (0.1, 0.2, 0.8))
+red_paint = materials.create_car_paint("RedPaint", (0.8, 0.1, 0.1))
+green_paint = materials.create_car_paint("GreenPaint", (0.1, 0.8, 0.1))
+glass = materials.create_glass("Glass", roughness=0.02)
 
 # Create an object at the origin with a selected material
-sphere = builder.add_sphere("/World/Sphere", radius=1.0, material=material)
+sphere = builder.add_sphere("/World/Sphere", radius=1.0, material=blue_paint)
 
 # Add a static camera looking at the object
 camera_path = "/World/Camera"
-camera_position = (-10, -5, -10)
+camera_position = (-10, 5, -10)
 camera.add_camera(camera_path, camera_position, target=(0, 0, 0))
 
 # Set HDRI lighting

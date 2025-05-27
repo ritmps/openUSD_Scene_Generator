@@ -77,4 +77,8 @@ Built with OpenUSD Python bindings (Python 3.8+, openUSD 25.05+) in Windows 11.
 
 ## Known Issues
 
-UsdShade based RenderSettingsManager class is implemented but is not fully tested. Note that some renderers like Storm might not understand RenderSettings prim. 
+UsdShade based RenderSettingsManager class is implemented but is not fully tested. Note that some renderers like Storm might not understand RenderSettings prim. Only Renderman works with RenderSettings prim in usdreocrd. 
+
+## Next Step
+
+1. Better solutions for uploading large assets, like hdri images. (Git LFS/Perforce/Houdini TOP nodes)
