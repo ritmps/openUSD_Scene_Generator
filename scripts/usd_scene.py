@@ -19,13 +19,13 @@ class SceneBuilder:
         else:
             self.stage = Usd.Stage.CreateInMemory()
         UsdGeom.SetStageUpAxis(self.stage, UsdGeom.Tokens.y)
-        UsdGeom.SetStageMetersPerUnit(self.stage, 0.01)
+        UsdGeom.SetStageMetersPerUnit(self.stage, 0.01) # centimeter
 
         # Create and set default prim at /World
         self.world = UsdGeom.Xform.Define(self.stage, "/World")
         self.stage.SetDefaultPrim(self.world.GetPrim())
 
-    def add_sphere(self, path, radius=1.0, material=None):
+    def add_sphere(self, path, radius=1.0, material=None, position=(0, 0, 0)):
         """
         Add a sphere primitive to the scene
 
@@ -33,12 +33,14 @@ class SceneBuilder:
             path (str): USD path for the new sphere
             radius (float): Sphere radius
             material (str, optional): Path to material to assign
+            position (tuple): XYZ position of the sphere
 
         Returns:
             UsdGeom.Sphere: Created sphere prim.
         """
         sphere = UsdGeom.Sphere.Define(self.stage, path)
         sphere.CreateRadiusAttr().Set(radius)
+        UsdGeom.XformCommonAPI(sphere).SetTranslate(position)
         if material:
             self._assign_material(sphere, material)
         return sphere
@@ -83,11 +85,12 @@ class SceneBuilder:
 
         # Triangle indices (2 triangles forming a quad)
         indices = [0, 1, 2, 0, 2, 3]
+        face_vertex_counts = [3, 3]  # Two triangles
 
         plane = UsdGeom.Mesh.Define(self.stage, path)
         plane.GetPointsAttr().Set(points)
         plane.GetFaceVertexIndicesAttr().Set(indices)
-        plane.GetFaceVertexCountsAttr().Set([3] * len(indices))
+        plane.GetFaceVertexCountsAttr().Set(face_vertex_counts)
 
         if material:
             self._assign_material(plane, material)
@@ -268,6 +271,70 @@ class Environment:
         dome_light.CreateTextureFileAttr(hdri_path)
         dome_light.CreateIntensityAttr(intensity)
         return dome_light
+
+class LightManager:
+    """Class for adding lights to the USD scene."""
+
+    def __init__(self, stage):
+        """
+        Initialize the LightManager with a USD stage.
+        
+        Args:
+            stage (Usd.Stage): The USD stage to operate on.
+        """
+        self.stage = stage
+
+    def add_area_light(self, path="/World/AreaLight", intensity=5, color=(1.0, 1.0, 1.0), width=5.0, height=5.0, position=(0, 5, -5), rotation=(0, 45, -45)):
+        """
+        Add a rectangle area light to the scene.
+
+        Args:
+            path (str): USD path for the light prim.
+            intensity (float): Light intensity.
+            color (tuple): RGB color.
+            width (float): Width of the light source.
+            height (float): Height of the light source.
+            position (tuple): XYZ position of the light.
+            rotation (tuple): XYZ rotation angles in degrees.
+
+        Returns:
+            UsdLux.RectLight: The created area light prim.
+        """
+        light = UsdLux.RectLight.Define(self.stage, path)
+        light.CreateIntensityAttr(intensity)
+        light.CreateColorAttr(color)
+        light.CreateWidthAttr(width)
+        light.CreateHeightAttr(height)
+
+        # Build transformation matrix
+        translate_mat = Gf.Matrix4d().SetTranslate(Gf.Vec3d(*position))
+        rot_x = Gf.Matrix4d().SetRotate(Gf.Rotation(Gf.Vec3d(1, 0, 0), rotation[0]))
+        rot_y = Gf.Matrix4d().SetRotate(Gf.Rotation(Gf.Vec3d(0, 1, 0), rotation[1]))
+        rot_z = Gf.Matrix4d().SetRotate(Gf.Rotation(Gf.Vec3d(0, 0, 1), rotation[2]))
+
+        final_transform = rot_z * rot_y * rot_x * translate_mat  # Rz * Ry * Rx * T
+
+        xform = light.AddTransformOp()
+        xform.Set(final_transform)
+
+        return light
+        
+    def add_distant_light(self, path="/World/DistantLight", intensity=1000, color=(1.0, 1.0, 1.0)):
+        """
+        Add a distant light (like the sun) to the scene.
+
+        Args:
+            path (str): USD path for the light prim.
+            intensity (float): Light intensity.
+            color (tuple): RGB color.
+
+        Returns:
+            UsdLux.DistantLight: The created light prim.
+        """
+        light = UsdLux.DistantLight.Define(self.stage, path)
+        light.CreateIntensityAttr(intensity)
+        light.CreateColorAttr(color)
+        return light
 
 class Camera:
     """Class for managing camera creation and editing in USD scenes."""
