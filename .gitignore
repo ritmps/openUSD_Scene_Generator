@@ -36,7 +36,6 @@ conda-meta/
 *.usd_tmp
 *.usdpreview
 
-
 # ------------------------
 # OS/platform noise
 # ------------------------
@@ -51,6 +50,13 @@ ehthumbs.db     # Windows
 *.swo
 *.bak
 *.tmp
+
+# ------------------------
+# Blender temp files
+# ------------------------
+*.blend1
+*.blend2
+*.blend@
 
 # ------------------------
 # Project output
