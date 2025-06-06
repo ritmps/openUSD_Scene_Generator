@@ -56,7 +56,7 @@ class Camera:
 
         return cam
 
-    def generate_orbit_cameras(self, center=(0, 0, 0), radius=10.0, height=5.0,
+    def generate_orbit_cameras(self, target=(0, 0, 0), radius=10.0, height=5.0,
                                 num_views=8, focal_length=35.0, prefix="OrbitCam"):
         """
         Generate an orbiting camera array around a central target.
@@ -79,7 +79,7 @@ class Camera:
             z = radius * math.sin(angle)
             position = (x, height, z)
             name = f"{prefix}_{i}"
-            self.add_camera(name=name, position=position, target=center, focal_length=focal_length)
+            self.add_camera(name=name, position=position, target=target, focal_length=focal_length)
             paths.append(f"{self.root_path}/{name}")
         return paths
 
