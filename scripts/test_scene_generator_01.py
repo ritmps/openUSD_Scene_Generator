@@ -8,7 +8,6 @@ from core.scene_builder import SceneBuilder
 from core.material_lib import MaterialLibrary
 from core.lighting import Environment
 from core.camera import Camera
-from animation.animator import animate_camera, generate_orbit_path
 
 # Output directory
 OUTPUT_DIR = "./outputs"

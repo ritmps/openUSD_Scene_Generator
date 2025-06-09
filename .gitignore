@@ -62,7 +62,8 @@ ehthumbs.db     # Windows
 # Project output
 # ------------------------
 outputs/renders*
-!outputs/renders/.gitkeep   # keep folder but ignore contents
+!outputs/renders/.gitkeep   
 outputs/scenes*
 !outputs/scenes/.gitkeep 
 
+old_scripts/
