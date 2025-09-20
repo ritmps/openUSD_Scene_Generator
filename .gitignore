@@ -65,5 +65,8 @@ outputs/renders*
 !outputs/renders/.gitkeep   
 outputs/scenes*
 !outputs/scenes/.gitkeep 
+assets/textures*
+!assets/textures/.gitkeep
+
 
 old_scripts/

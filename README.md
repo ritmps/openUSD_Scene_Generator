@@ -9,8 +9,10 @@ This project provides a modular Python-based toolkit for creating, customizing, 
 ```
 openUSD_Scene_Generator/
 ├── assets/                # assets like hdri images for env lighting
-├── outputs/               # Output 3D scenes and rendered images
-├── scripts/               # Python scripts for scene generation and test sample
+├── blender/               # blender python scripts for batch rendering generated usd scenes with AOVs
+├── core/                  # modularized openUSD scene generator
+├── outputs/               # output directory for usd scene files, rendered images and metadata
+├── scripts/               # python scripts for testing scene generator
 ├── environment.yml        # Conda environment definition (via Miniforge3)
 ├── LICENSE                # Project license
 └── README.md              # This file
@@ -71,14 +73,7 @@ Use help flag to see advanced options like change to a different renderer, selec
 
 Use help flag to see advanced options like change to a different renderer, select camera and etc.
 
-## 📝 Notes
+## 📝 Current State of this Branch
 
-Built with OpenUSD Python bindings (Python 3.8+, openUSD 25.05+) in Windows 11.
+This branch is not actively maintained and may not function as expected.
 
-## Known Issues
-
-UsdShade based RenderSettingsManager class is implemented but is not fully tested. Note that some renderers like Storm might not understand RenderSettings prim. Only Renderman works with RenderSettings prim in usdreocrd. 
-
-## Next Step
-
-1. Better solutions for uploading large assets, like hdri images. (Git LFS/Perforce/Houdini TOP nodes)
