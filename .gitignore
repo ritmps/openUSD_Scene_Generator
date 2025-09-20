@@ -24,6 +24,7 @@ conda-meta/
 *.exr
 *.png
 *.jpg
+*.tex
 
 # ------------------------
 # OpenUSD-specific ignores
@@ -31,6 +32,7 @@ conda-meta/
 *.usdc
 *.usd
 *.usdz
+*.usda
 *.usda.bak
 *.usd.lock
 *.usd_tmp
@@ -59,4 +61,8 @@ outputs/renders*
 !outputs/renders/.gitkeep   # keep folder but ignore contents
 outputs/scenes*
 !outputs/scenes/.gitkeep 
+assets/scenes*
+!assets/scenes/.gitkeep 
+assets/textures*
+!assets/assets/textures*/.gitkeep 
 

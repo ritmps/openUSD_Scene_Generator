@@ -77,8 +77,10 @@ Built with OpenUSD Python bindings (Python 3.8+, openUSD 25.05+) in Windows 11.
 
 ## Known Issues
 
-UsdShade based RenderSettingsManager class is implemented but is not fully tested. Note that some renderers like Storm might not understand RenderSettings prim. Only Renderman works with RenderSettings prim in usdreocrd. 
+AOV Rendering with usdrecord
+The usdrecord utility currently cannot render any AOVs specified in the render settings.
+Most renderers do not properly interpret render settings embedded in the USD file, with the exception of Pixar RenderMan.
+When rendering with RenderMan, the AOVs are recognized but no corresponding render products are generated.
+This may be caused by incorrect data types in the render settings, or by limitations/bugs in the usdrecord utility itself.
 
-## Next Step
-
-1. Better solutions for uploading large assets, like hdri images. (Git LFS/Perforce/Houdini TOP nodes)
+Due to these issues, the project has migrated to Houdini, leveraging the Solaris context and TOP network framework for rendering and pipeline integration.
